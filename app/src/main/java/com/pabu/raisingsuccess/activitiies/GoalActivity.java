@@ -1,8 +1,10 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.activitiies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.pabu.raisingsuccess.R;
 
 public class GoalActivity extends AppCompatActivity {
 

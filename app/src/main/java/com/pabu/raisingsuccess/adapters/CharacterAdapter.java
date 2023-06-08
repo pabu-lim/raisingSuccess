@@ -1,4 +1,4 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pabu.raisingsuccess.R;
+import com.pabu.raisingsuccess.models.CharacterModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +19,14 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.View
 
     private List<CharacterModel> characterList;
     private LevelIndexAdapter levelIndexAdapter;
-    private RasingSuccessDB db;
     private Context context;
-    public CharacterAdapter(RasingSuccessDB db) {
-
-        this.db = db;
-    }
 
     public CharacterAdapter(ArrayList<CharacterModel> characterList, Context context) {
         this.characterList = characterList;
         this.context = context;
         this.levelIndexAdapter = new LevelIndexAdapter(context);
     }
-    public void setCharacters(ArrayList<CharacterModel> characterList) {
-        this.characterList = characterList;
-        notifyDataSetChanged();
-    }
+
 
     @NonNull
     @Override

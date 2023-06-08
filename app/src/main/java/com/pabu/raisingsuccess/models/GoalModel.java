@@ -1,4 +1,4 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.models;
 
 public class GoalModel {
     private int goalNumber;

@@ -1,4 +1,4 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.adapters;
 
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -9,6 +9,10 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.pabu.raisingsuccess.R;
+import com.pabu.raisingsuccess.db.RasingSuccessDB;
+import com.pabu.raisingsuccess.models.ToDoModel;
 
 import java.util.ArrayList;
 
@@ -68,7 +72,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>{
     public ArrayList<Integer> getCheckedTasksIds() {
         ArrayList<Integer> checkedTaskIds = new ArrayList<>();
         for (ToDoModel task : todoList) {
-            if (task.getStatus() == 1 && task.getCompletionDate() == null) {
+            if (task.getStatus() == 1) {
                 checkedTaskIds.add(task.getId());
             }
         }

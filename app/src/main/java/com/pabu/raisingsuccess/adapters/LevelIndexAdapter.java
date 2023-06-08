@@ -1,8 +1,10 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.pabu.raisingsuccess.db.RasingSuccessDB;
 
 public class LevelIndexAdapter {
     private SQLiteDatabase db;

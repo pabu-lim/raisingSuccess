@@ -1,4 +1,4 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.pabu.raisingsuccess.models.CharacterModel;
+import com.pabu.raisingsuccess.models.GoalModel;
+import com.pabu.raisingsuccess.models.ToDoModel;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 public class RasingSuccessDB extends SQLiteOpenHelper {
 
@@ -98,7 +101,7 @@ public class RasingSuccessDB extends SQLiteOpenHelper {
 // 캐릭터 정보 가져오기
     public CharacterModel getCharacterModel() {
         Log.d("RasingSuccessDB", "getCharacter() is called");
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(characterTbl, null, null, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -110,6 +113,7 @@ public class RasingSuccessDB extends SQLiteOpenHelper {
             if(columnIndex != -1) {
                 character.setCharacterId(cursor.getInt(columnIndex));
             } else {
+                Log.d("RasingSuccessDB", "getCharacter() is called OMMMMGGGGId");
                 // Handle the case where the characterId column is not found
             }
 
@@ -117,6 +121,7 @@ public class RasingSuccessDB extends SQLiteOpenHelper {
             if(columnIndex != -1) {
                 character.setCharacterName(cursor.getString(columnIndex));
             } else {
+                Log.d("RasingSuccessDB", "getCharacter() is called OMMMMGGGGName");
                 // Handle the case where the characterName column is not found
             }
 
@@ -124,6 +129,7 @@ public class RasingSuccessDB extends SQLiteOpenHelper {
             if(columnIndex != -1) {
                 character.setCharacterLevel(cursor.getInt(columnIndex));
             } else {
+                Log.d("RasingSuccessDB", "getCharacter() is called OMMMMGGGGLevel");
                 // Handle the case where the characterLevel column is not found
             }
 
@@ -131,9 +137,10 @@ public class RasingSuccessDB extends SQLiteOpenHelper {
             if(columnIndex != -1) {
                 character.setCharacterExp(cursor.getInt(columnIndex));
             } else {
+                Log.d("RasingSuccessDB", "getCharacter() is called OMMMMGGGGExp");
                 // Handle the case where the characterExp column is not found
             }
-
+            System.out.println(character);
             cursor.close();
            // db.close();
             return character;
@@ -250,7 +257,38 @@ public ToDoModel getTask(int id) {
     cursor.close();
     return task;
 }
+public ArrayList<CharacterModel> getCharacterLive(){
+    ArrayList<CharacterModel> characterModels = new ArrayList<>();
 
+    Cursor cursor = null;
+    String query = "SELECT * FROM " + characterTbl;
+    db = this.getReadableDatabase();
+
+    if (db != null) {
+        cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            int columnIndexId = cursor.getColumnIndex(characterId);
+            int columnIndexName = cursor.getColumnIndex(characterName);
+            int columnIndexLevel = cursor.getColumnIndex(characterLevel);
+            int columnIndexExp = cursor.getColumnIndex(characterExp);
+
+            while (cursor.moveToNext()) {
+                CharacterModel characterModel = new CharacterModel();
+
+                characterModel.setCharacterId(cursor.getInt(columnIndexId));
+                characterModel.setCharacterName(cursor.getString(columnIndexName));
+                characterModel.setCharacterId(cursor.getInt(columnIndexLevel));
+                characterModel.setCharacterId(cursor.getInt(columnIndexExp));
+                characterModels.add(characterModel);
+            }
+
+            cursor.close();
+        }
+    }
+
+    return characterModels;
+}
 
 
     public ArrayList<GoalModel> getAllGoals() {
@@ -339,17 +377,24 @@ public ToDoModel getTask(int id) {
      * @param id 아이디
      * @param task 할일
      */
-    public void updateTask(int id, String task, String completionDate, int completionLevel) {
+    public void updateTask(int id, String task) {
 
         openDatabase();
         ContentValues cv = new ContentValues();
         cv.put(todoTask, task);
-        cv.put(todoCompletionDate, completionDate);
-        cv.put(todoCompletionLevel, completionLevel);
         db.update(todoTbl, cv, "todo_id=?", new String[]{String.valueOf(id)});
 
     }
+    public void updateDayTask(int id, String completionDate, int completionLevel) {
 
+        openDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(todoCompletionDate, completionDate);
+        cv.put(todoCompletionLevel, completionLevel);
+        cv.put(todoStatus, 1);
+        db.update(todoTbl, cv, "todo_id=?", new String[]{String.valueOf(id)});
+
+    }
 
 
     /**

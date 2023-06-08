@@ -1,4 +1,4 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.pabu.raisingsuccess.adapters.CharacterAdapter;
+import com.pabu.raisingsuccess.R;
+import com.pabu.raisingsuccess.adapters.ToDoAdapter;
+import com.pabu.raisingsuccess.activitiies.GoalActivity;
+import com.pabu.raisingsuccess.db.RasingSuccessDB;
+import com.pabu.raisingsuccess.models.CharacterModel;
+import com.pabu.raisingsuccess.models.ToDoModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,9 +41,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 public class ScheduleFragment extends Fragment {
 
     private ArrayList<ToDoModel> taskList;
-    private ArrayList<CharacterModel> characterList; // 조회된 데이터를 담을 ArrayList
     private ToDoAdapter adapter;
-    private CharacterAdapter characterAdapter;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private FloatingActionButton fab_end;
@@ -46,11 +49,13 @@ public class ScheduleFragment extends Fragment {
     private EditText todoText;
     private Button addBtn;
 
+    private ArrayList<CharacterModel> characterList;
+    private CharacterAdapter adapter_character;
+
 
 
     //DB
     private RasingSuccessDB db;
-
 
     //입력 레이아웃
     private LinearLayout bottomLayout;
@@ -68,18 +73,19 @@ public class ScheduleFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        db = new RasingSuccessDB(context);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_schedule, container, false);
 
         //DB 연결
-        db = new RasingSuccessDB(getContext());
+        db = new RasingSuccessDB(context);
 
         //초기화
         taskList = new ArrayList<>();
+        characterList = new ArrayList<>();
         bottomLayout = rootView.findViewById(R.id.bottom_section);
         todoText = rootView.findViewById(R.id.todo_text);
         addBtn = rootView.findViewById(R.id.add_btn);
@@ -94,14 +100,8 @@ public class ScheduleFragment extends Fragment {
         //adapter 설정
         adapter = new ToDoAdapter(db);
         adapter.setTasks(taskList);
-
-        characterAdapter = new CharacterAdapter(db);
-        characterAdapter.setCharacters(characterList);
-
-
         //adapter 적용
         recyclerView.setAdapter(adapter);
-        recyclerView.setAdapter(characterAdapter);
 
         //조회
         selectData();
@@ -123,17 +123,17 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
+        //하루끝 버튼
         fab_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // completionDate가 null이고 체크된 할 일 목록의 ID들을 얻습니다.
                 ArrayList<Integer> checkedTaskIds = adapter.getCheckedTasksIds();
-                Log.d("DEBUG", "checkedTaskIds: " + checkedTaskIds.toString());
 
                 // 현재 캐릭터 레벨값 가져오기
                 CharacterModel character = db.getCharacterModel();
                 int currentCharacterLevel = character.getCharacterLevel();
-                Log.d("DEBUG", "Current character level: " + currentCharacterLevel);
+
                 // 현재시간 얻기
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String currentTime = sdf.format(new Date());
@@ -143,7 +143,7 @@ public class ScheduleFragment extends Fragment {
                     ToDoModel task = db.getTask(taskId);
                     task.setCompletionDate(currentTime);
                     task.setCompletionLevel(currentCharacterLevel);
-                    db.updateTask(taskId, task.getTask(), currentTime, currentCharacterLevel);
+                    db.updateDayTask(taskId, currentTime, currentCharacterLevel);
                 }
 
                 // UI 갱신
@@ -169,8 +169,6 @@ public class ScheduleFragment extends Fragment {
                     task.setTask(text);
                     task.setStatus(0);
 
-                    long now = System.currentTimeMillis();
-                    Date date = new Date(now);
                     //할일 추가
                     db.AddTask(task);
 
@@ -178,7 +176,7 @@ public class ScheduleFragment extends Fragment {
                     selectReset("할일등록");
                 } else { //수정일때
                     //할일 수정
-                    db.updateTask(gId, text, null, 0);
+                    db.updateTask(gId, text);
 
                     //조회 및 리셋
                     selectReset("수정");

@@ -1,16 +1,17 @@
-package com.pabu.raisingsuccess;
+package com.pabu.raisingsuccess.activitiies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.android.material.snackbar.Snackbar;
+import com.pabu.raisingsuccess.fragments.CalendarFragment;
+import com.pabu.raisingsuccess.fragments.MyInfoFragment;
+import com.pabu.raisingsuccess.R;
+import com.pabu.raisingsuccess.fragments.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity {
     ScheduleFragment scheduleFragment;
